@@ -60,8 +60,44 @@ app.post('/chat', (req, res) => {
 
 
 app.get('/chat', (req, res) => {
-    console.log("hllo")
-    res.send("hllo")
+    // let chat_part1 = fs.readFileSync('./public/html/chat.html', 'utf8');
+    // let chat_part2 = '';
+    // let data = fs.readFileSync('./public/data/chat.txt', 'utf8');
+    // let chat_part3 = fs.readFileSync('./public/html/chat2.html', 'utf8')
+    //
+    // let lines = data.split('\n');
+    // lines.forEach((line) => {
+    //     let elements = line.split(';');
+    //     if(elements[1] !== undefined)
+    //         chat_part2 += `<div><h3>${elements[0]}</h3><p>${elements[1]}</p></div>`
+    // })
+    // res.send(`${chat_part1}${chat_part2}${chat_part3}`)
+
+    let data = fs.readFile('./public/data/chat.txt', 'utf8', (err, data) => {
+        if (err) {
+            res.status(404).send('Sorry, no messages stored');
+        } else {
+            let names = [];
+            let messages = [];
+            let lines = data.split('\n');
+
+            for (let i = lines.length - 1; i >= 0; i--) {
+                let elements = lines[i].split(';');
+                if (elements[1] !== undefined) {
+                    names.push(elements[0]);
+                    messages.push(elements[1]);
+                }
+            }
+            let obj = {'names': names, "messages": messages}
+            res.send(JSON.stringify(obj))
+        }
+    });
+});
+
+app.get('chat_loading.js', (req, res) => {
+   let data = fs.read('.public/data/chat.txt', (err, data) => {
+       res.send(data)
+   });
 });
 
 app.listen(3000, () => {
